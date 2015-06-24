@@ -1,6 +1,5 @@
 #include "main.h"
 #include <phdk.h>
-#include "phf\runas.h"
 #include "resource.h"
 
 LOGICAL DllMain(
@@ -23,7 +22,16 @@ LOGICAL DllMain(
 		info->DisplayName = L"Emergency";
 		info->Author = L"TETYYS";
 		info->Description = L"Brings up ProcessHacker in emergency situations";
+		info->Url = L"http://wj32.org/processhacker/forums/viewtopic.php?f=18&t=1954";
 		info->HasOptions = TRUE;
+
+		ULONG major, minor;
+		PhGetPhVersionNumbers(&major, &minor, NULL, NULL);
+		if (major < 2 || minor < 36) {
+			PhShowMessage(NULL, MB_ICONERROR, L"%s%d%d%d%s", L"Your Process Hacker version is not supported by Emergency plugin, please update Process Hacker or plugin will stay disabled. (Requires revision 2.36)");
+			info->HasOptions = FALSE;
+			return FALSE;
+		}
 
 		Switching = FALSE;
 
@@ -198,7 +206,9 @@ INT_PTR CALLBACK OptionsDlgProc(
 			break;
 		case IDOK:
 		{
-			PhSetStringSetting(DESKTOP_SETTING, PHA_GET_DLGITEM_TEXT(hwndDlg, IDC_DESKTOP)->Buffer);
+			PPH_STRING setting = PhGetWindowText(GetDlgItem(hwndDlg, IDC_DESKTOP)); {
+				PhSetStringSetting(DESKTOP_SETTING, setting->Buffer);
+			} PhDereferenceObject(setting);
 			EndDialog(hwndDlg, IDOK);
 		}
 			break;
@@ -249,7 +259,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 	_In_ LPARAM lParam
 	)
 {
-	ULONG identifier = wParam;
+	WPARAM identifier = wParam;
 	KBDLLHOOKSTRUCT *kbd = (KBDLLHOOKSTRUCT*)lParam;
 	BOOL enabled;
 
@@ -280,19 +290,17 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		Switching = TRUE;
 		// GO GO GO!
 
-		WCHAR fullPath[MAX_PATH];
-		GetModuleFileName(NULL, fullPath, MAX_PATH);
-
 		ULONG sessId;
 		PhGetProcessSessionId(GetCurrentProcess(), &sessId);
-
-		/*EmergencyDesktopFull = ;
-		ULONG_PTR index = PhFindCharInString(EmergencyDesktopFull, 0, L'\\') + 1;
-		EmergencyDesktop = PhSubstring(EmergencyDesktopFull, index, EmergencyDesktopFull->Length - index);*/
+		
 		PPH_STRING desktopFull = PhGetStringSetting(DESKTOP_SETTING);
 		ULONG_PTR index = PhFindCharInString(desktopFull, 0, L'\\') + 1;
 		PPH_STRING desktop = PhSubstring(desktopFull, index, desktopFull->Length - index);
-		PPH_STRING cmd = PhFormatString(L"--EmergencySwitch %s", desktop->Buffer);
+
+		PPH_STRING cmd;
+		PPH_STRING app = PhGetApplicationFileName(); {
+			cmd = PhFormatString(L"\"%s\" -newinstance --EmergencySwitch %s", app->Buffer, desktop->Buffer);
+		} PhDereferenceObject(app);
 
 		if (!DesktopExists(desktop)) {
 			if (CreateDesktop(desktop->Buffer, NULL, NULL, 0, DESKTOP_ALL_ACCESS, NULL) == NULL) {
@@ -303,12 +311,12 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 				PhDereferenceObject(cmd);
 				goto nextHook;
 			}
+			// do NOT close the desktop!
 		}
-
-		PhExecuteRunAsCommand2(NULL, fullPath, cmd->Buffer, L"NT AUTHORITY\\SYSTEM", PhGetStringOrEmpty(NULL), LOGON32_LOGON_SERVICE, NULL, sessId, desktopFull->Buffer, FALSE);
-		// do NOT close the desktop!
-
 		PhDereferenceObject(desktop);
+
+		PhExecuteRunAsCommand2(NULL, cmd->Buffer, L"NT AUTHORITY\\SYSTEM", PhGetStringOrEmpty(NULL), LOGON32_LOGON_SERVICE, NULL, sessId, desktopFull->Buffer, FALSE);
+		
 		PhDereferenceObject(desktopFull);
 		PhDereferenceObject(cmd);
 		Sleep(2000);
