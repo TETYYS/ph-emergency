@@ -79,9 +79,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <GenerateManifest>false</GenerateManifest>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -120,7 +117,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX64</TargetMachine>
-      <OutputFile>D:\VGDB\PH\processhacker-code\2.x\trunk\bin\Release64\plugins\MalHide.dll</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -132,13 +129,13 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>None</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ProcessHacker.lib;ntdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\lib\i386;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -148,8 +145,6 @@
       </IgnoreAllDefaultLibraries>
       <AdditionalOptions>
       </AdditionalOptions>
-      <DelayLoadDLLs>
-      </DelayLoadDLLs>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
@@ -181,9 +176,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
+    <ClCompile Include="phf\clapi.c" />
+    <ClCompile Include="phf\runas.c" />
+    <ClCompile Include="phf\svcapi.c" />
+    <ClCompile Include="phf\svcapiport.c" />
+    <ClCompile Include="phf\svcclient.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h" />
+    <ClInclude Include="phf\phsvc.h" />
+    <ClInclude Include="phf\phsvcapi.h" />
+    <ClInclude Include="phf\phsvccl.h" />
+    <ClInclude Include="phf\runas.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

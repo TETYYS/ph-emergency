@@ -34,10 +34,6 @@ VOID ShowOptionsCallback(
 	__in_opt PVOID Context
 	);
 
-BOOLEAN CheckPluginProcedureAddress(
-	_In_ PSTR Name
-	);
-
 PPH_PLUGIN PluginInstance;
 PH_CALLBACK_REGISTRATION PluginUnloadCallbackRegistration;
 PH_CALLBACK_REGISTRATION ShowOptionsCallbackRegistration;

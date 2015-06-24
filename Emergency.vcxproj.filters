@@ -2,10 +2,42 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.c" />
+    <ClCompile Include="phf\clapi.c">
+      <Filter>PH fragments</Filter>
+    </ClCompile>
+    <ClCompile Include="phf\svcapi.c">
+      <Filter>PH fragments</Filter>
+    </ClCompile>
+    <ClCompile Include="phf\svcapiport.c">
+      <Filter>PH fragments</Filter>
+    </ClCompile>
+    <ClCompile Include="phf\svcclient.c">
+      <Filter>PH fragments</Filter>
+    </ClCompile>
+    <ClCompile Include="phf\runas.c">
+      <Filter>PH fragments</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h" />
+    <ClInclude Include="phf\phsvc.h">
+      <Filter>PH fragments</Filter>
+    </ClInclude>
+    <ClInclude Include="phf\phsvcapi.h">
+      <Filter>PH fragments</Filter>
+    </ClInclude>
+    <ClInclude Include="phf\phsvccl.h">
+      <Filter>PH fragments</Filter>
+    </ClInclude>
+    <ClInclude Include="phf\runas.h">
+      <Filter>PH fragments</Filter>
+    </ClInclude>
     <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="PH fragments">
+      <UniqueIdentifier>{121fa5fa-6d66-4cdb-97b9-11c30967a4dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Emergency.rc" />
