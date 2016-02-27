@@ -5,5 +5,5 @@ Plugin for Process Hacker 2. Brings up PH in emergency situations
 
 # Requirements: 
 - > Windows XP
-- Process Hacker 2.36
+- >= Process Hacker 2.38
 - Elevated Process Hacker running in background

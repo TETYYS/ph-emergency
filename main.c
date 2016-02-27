@@ -27,8 +27,8 @@ LOGICAL DllMain(
 
 		ULONG major, minor;
 		PhGetPhVersionNumbers(&major, &minor, NULL, NULL);
-		if (major < 2 || minor < 36) {
-			PhShowMessage(NULL, MB_ICONERROR, L"%s%d%d%d%s", L"Your Process Hacker version is not supported by Emergency plugin, please update Process Hacker or plugin will stay disabled. (Requires revision 2.36)");
+		if (major < 2 || minor < 38) {
+			PhShowMessage(NULL, MB_ICONERROR, L"%s%d%d%d%s", L"Your Process Hacker version is not supported by Emergency plugin, please update Process Hacker or plugin will stay disabled. (Requires version 2.38)");
 			info->HasOptions = FALSE;
 			return FALSE;
 		}
@@ -73,7 +73,7 @@ LOGICAL DllMain(
 				&ShowOptionsCallbackRegistration
 				);
 
-			if (PhElevated) {
+			if (PhGetOwnTokenAttributes().Elevated) {
 				hHookMutex = CreateMutex(NULL, FALSE, L"Emergency_MtxWaitForHook");
 				if (hHookMutex == NULL)
 					return GetLastError();
@@ -102,7 +102,7 @@ VOID ShowOptionsCallback(
 	__in_opt PVOID Context
 	)
 {
-	if (!PhElevated)
+	if (!PhGetOwnTokenAttributes().Elevated)
 		PhShowMessage(NULL, MB_ICONEXCLAMATION | MB_OK, L"Please note that Emergency plugin requires elevated privileges to work.");
 
 	DialogBox(PluginInstance->DllBase,
@@ -292,7 +292,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 
 		ULONG sessId;
 		PhGetProcessSessionId(GetCurrentProcess(), &sessId);
-		
+
 		PPH_STRING desktopFull = PhGetStringSetting(DESKTOP_SETTING);
 		ULONG_PTR index = PhFindCharInString(desktopFull, 0, L'\\') + 1;
 		PPH_STRING desktop = PhSubstring(desktopFull, index, desktopFull->Length - index);
@@ -316,7 +316,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(
 		PhDereferenceObject(desktop);
 
 		PhExecuteRunAsCommand2(NULL, cmd->Buffer, L"NT AUTHORITY\\SYSTEM", PhGetStringOrEmpty(NULL), LOGON32_LOGON_SERVICE, NULL, sessId, desktopFull->Buffer, FALSE);
-		
+
 		PhDereferenceObject(desktopFull);
 		PhDereferenceObject(cmd);
 		Sleep(2000);
