@@ -28,7 +28,7 @@ LOGICAL DllMain(
 		ULONG major, minor;
 		PhGetPhVersionNumbers(&major, &minor, NULL, NULL);
 		if (major < 2 || minor < 38) {
-			PhShowMessage(NULL, MB_ICONERROR, L"%s%d%d%d%s", L"Your Process Hacker version is not supported by Emergency plugin, please update Process Hacker or plugin will stay disabled. (Requires version 2.38)");
+			PhShowMessage(NULL, MB_ICONERROR, L"Your Process Hacker version is not supported by Emergency plugin, please update Process Hacker or plugin will stay disabled. (Requires version 2.38)");
 			info->HasOptions = FALSE;
 			return FALSE;
 		}
